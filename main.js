@@ -8,6 +8,7 @@ var fs = require('fs');
 //Will be filled with names and types
 // and used to generate public.xml
 var public = [];
+var publicKeys = {}; //Used to prevent duplicates
 
 //Values resource types whose children should be added to public.xml
 var recursiveTypes = [
@@ -41,6 +42,17 @@ function getLastPathComponent(path) {
 }
 
 function addToPublicObj(type, name) {
+
+	if (!publicKeys[type]) {
+		publicKeys[type] = {};
+	}
+
+	//Check if name was already added
+	if (!publicKeys[type][name]) {
+		return;
+	}
+
+	publicKeys[type][name] = true;
 	public.push({
 		type: type,
 		name: name
