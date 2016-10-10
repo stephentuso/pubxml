@@ -48,7 +48,7 @@ function addToPublicObj(type, name) {
 	}
 
 	//Check if name was already added
-	if (!publicKeys[type][name]) {
+	if (publicKeys[type][name]) {
 		return;
 	}
 
