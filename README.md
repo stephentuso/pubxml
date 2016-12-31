@@ -24,7 +24,24 @@ android {
 }
 ```
 
-Once the public resources are in a separate directory, open a terminal and `cd` to that dir. Generate `public.xml` by simply running `pubxml`.
+Once the public resources are in a separate directory, open a terminal and navigate to that dir. Generate `public.xml` by running `pubxml`.
+
+You can also run `pubxml` automatically before each build in Android Studio. To get it working on Mac OS and linux, you can add the following to the library module gradle file:
+
+```
+task generatePublicXml(type: Exec) {
+    workingDir 'src/main/res-public'
+    commandLine 'bash', '-c', 'export PATH="$PATH:/usr/local/bin"; pubxml'
+    ignoreExitValue true
+}
+
+//Don't run pubxml task on Windows
+if (! System.getProperty('os.name').toLowerCase().contains('windows')) {
+    preBuild.dependsOn generatePublicXml
+}
+```
+
+Change `workingDir` if you used a different folder name. I don't have a Windows computer to test it on, so it is disabled on Windows to prevent the build from failing.
 
 License
 -------
