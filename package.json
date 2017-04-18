@@ -4,7 +4,7 @@
   "description": "Utility to create public.xml for Android library projects",
   "main": "main.js",
   "bin": {
-      "pubxml": "./main.js"
+    "pubxml": "./main.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,5 +28,13 @@
   "dependencies": {
     "node-dir": "^0.1.16",
     "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1"
   }
 }
