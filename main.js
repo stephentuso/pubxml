@@ -1,29 +1,29 @@
 #!/usr/bin/env node
 
-var dir = require('node-dir')
-var xml2js = require('xml2js')
-var pathUtil = require('path')
-var fs = require('fs')
+const dir = require('node-dir')
+const xml2js = require('xml2js')
+const pathUtil = require('path')
+const fs = require('fs')
 
 // Will be filled with names and types
 // and used to generate public.xml
-var publicValues = []
-var publicKeys = {} // Used to prevent duplicates
+const publicValues = []
+const publicKeys = {} // Used to prevent duplicates
 
 // Values resource types whose children should be added to public.xml
-var recursiveTypes = [
+const recursiveTypes = [
   'declare-styleable'
 ]
 
 // Values resource types that shouldn't be added to public.xml
-var dontAdd = [
+const dontAdd = [
   'declare-styleable'
 ]
 
 dir.subdirs(process.cwd(), function (err, subdirs) {
   if (err) throw err
-  var finished = 0
-  for (var i = 0; i < subdirs.length; i++) {
+  let finished = 0
+  for (let i = 0; i < subdirs.length; i++) {
     processFolder(subdirs[i], function () {
       finished++
       if (finished === subdirs.length) {
@@ -37,7 +37,7 @@ dir.subdirs(process.cwd(), function (err, subdirs) {
  * Gets the file or dir name from a path
  */
 function getLastPathComponent (path) {
-  var pathComponents = path.split(pathUtil.sep)
+  const pathComponents = path.split(pathUtil.sep)
   return pathComponents[pathComponents.length - 1]
 }
 
@@ -62,7 +62,7 @@ function addToPublicObj (type, name) {
  * Will process folder
  */
 function processFolder (path, callback) {
-  var dirName = getLastPathComponent(path)
+  const dirName = getLastPathComponent(path)
   if (dirName.match(/^values/i)) {
     processValuesFolder(path, callback)
   } else {
@@ -89,17 +89,11 @@ function processValuesFolder (path, callback) {
       xml2js.parseString(content, { explicitArray: true }, function (err, result) {
         if (err) throw err
 
-        if (!result) {
+        if (!result || !result.resources) {
           return
         }
 
-        var resources = result.resources
-
-        if (!resources) {
-          return
-        }
-
-        processResourceXmlObj(resources)
+        processResourceXmlObj(result.resources)
       })
       next()
     },
@@ -114,13 +108,13 @@ function processValuesFolder (path, callback) {
  * filenames as names
  */
 function processResourceFolder (path, callback) {
-  var dirName = getLastPathComponent(path)
-  var resType = dirName.split('-')[0]
+  const dirName = getLastPathComponent(path)
+  const resType = dirName.split('-')[0]
   dir.files(path, function (err, files) {
     if (err) throw err
-    for (var i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i++) {
       if (files[i].match(/\.xml$/i)) {
-        var name = getLastPathComponent(files[i]).split('.xml')[0]
+        const name = getLastPathComponent(files[i]).split('.xml')[0]
         addToPublicObj(resType, name)
       }
     }
@@ -132,15 +126,15 @@ function processResourceFolder (path, callback) {
  * Parse the resources object created by xml2js
  */
 function processResourceXmlObj (resources) {
-  var resourceTypes = Object.keys(resources)
-  for (var i = 0; i < resourceTypes.length; i++) {
-    var type = resourceTypes[i]
+  const resourceTypes = Object.keys(resources)
+  for (let i = 0; i < resourceTypes.length; i++) {
+    const type = resourceTypes[i]
 
     if (type === '$') {
       continue
     }
 
-    var resType = resources[type]
+    const resType = resources[type]
     processResourceTypeArray(type, resType)
   }
 }
@@ -149,8 +143,8 @@ function processResourceXmlObj (resources) {
  * Parse resource type array and add to public obj
  */
 function processResourceTypeArray (type, resType) {
-  for (var i = 0; i < resType.length; i++) {
-    var res = resType[i]
+  for (let i = 0; i < resType.length; i++) {
+    const res = resType[i]
 
     if (!res.$) {
       continue
@@ -168,12 +162,12 @@ function processResourceTypeArray (type, resType) {
 
 function formatPublicObject () {
   // Reformat public array to match xml2js format
-  var formattedPublic = {
+  const formattedPublic = {
     resources: {
       public: []
     }
   }
-  for (var i = 0; i < publicValues.length; i++) {
+  for (let i = 0; i < publicValues.length; i++) {
     formattedPublic.resources.public.push({
       '$': publicValues[i]
     })
@@ -182,15 +176,15 @@ function formatPublicObject () {
 }
 
 function buildXml (object) {
-  var builder = new xml2js.Builder()
+  const builder = new xml2js.Builder()
   return builder.buildObject(object)
 }
 
 function writePublicXml () {
-  var formatted = formatPublicObject()
-  var xml = buildXml(formatted)
-  var outDir = process.cwd() + pathUtil.sep + 'values'
-  var outFile = outDir + pathUtil.sep + 'public.xml'
+  const formatted = formatPublicObject()
+  const xml = buildXml(formatted)
+  const outDir = process.cwd() + pathUtil.sep + 'values'
+  const outFile = outDir + pathUtil.sep + 'public.xml'
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir)
   }
