@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const dir = require('node-dir')
 const xml2js = require('xml2js')
 const pathUtil = require('path')
@@ -20,18 +18,25 @@ const dontAdd = [
   'declare-styleable'
 ]
 
-dir.subdirs(process.cwd(), function (err, subdirs) {
-  if (err) throw err
-  let finished = 0
-  for (let i = 0; i < subdirs.length; i++) {
-    processFolder(subdirs[i], function () {
-      finished++
-      if (finished === subdirs.length) {
-        writePublicXml()
+function generatePublicXml (rootDir) {
+  return new Promise((resolve, reject) => {
+    dir.subdirs(rootDir, function (err, subdirs) {
+      if (err) {
+        reject(err)
+        return
+      }
+      let finished = 0
+      for (let i = 0; i < subdirs.length; i++) {
+        processFolder(subdirs[i], function () {
+          finished++
+          if (finished === subdirs.length) {
+            writePublicXml(rootDir).then(resolve)
+          }
+        })
       }
     })
-  }
-})
+  })
+}
 
 /**
  * Gets the file or dir name from a path
@@ -180,16 +185,25 @@ function buildXml (object) {
   return builder.buildObject(object)
 }
 
-function writePublicXml () {
+function writePublicXml (rootDir) {
   const formatted = formatPublicObject()
   const xml = buildXml(formatted)
-  const outDir = process.cwd() + pathUtil.sep + 'values'
-  const outFile = outDir + pathUtil.sep + 'public.xml'
+  const outDir = pathUtil.resolve(rootDir, 'values')
+  const outFile = pathUtil.resolve(outDir, 'public.xml')
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir)
   }
-  fs.writeFile(outFile, xml, function (err) {
-    if (err) throw err
-    console.log('Successfully wrote public resources to ' + outFile)
+  return new Promise((resolve, reject) => {
+    fs.writeFile(outFile, xml, function (err) {
+      if (err) {
+        reject(err)
+        return
+      }
+      resolve(outFile)
+    })
   })
+}
+
+module.exports = {
+  generatePublicXml: generatePublicXml
 }

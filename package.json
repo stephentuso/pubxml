@@ -4,11 +4,15 @@
   "description": "Utility to create public.xml for Android library projects",
   "main": "main.js",
   "bin": {
-    "pubxml": "./main.js"
+    "pubxml": "./cmd.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint *.js && ava"
   },
+  "files": [
+    "index.js",
+    "cmd.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stephentuso/pubxml.git"
@@ -17,6 +21,7 @@
     "android",
     "xml",
     "res",
+    "resources",
     "public"
   ],
   "author": "stephentuso",
@@ -27,9 +32,11 @@
   "homepage": "https://github.com/stephentuso/pubxml#readme",
   "dependencies": {
     "node-dir": "^0.1.16",
+    "pify": "^2.3.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "ava": "^0.19.1",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.2.0",
