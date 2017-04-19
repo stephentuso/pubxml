@@ -1,6 +1,6 @@
 {
   "name": "pubxml",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Utility to create public.xml for Android library projects",
   "main": "main.js",
   "bin": {
