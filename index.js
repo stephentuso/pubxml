@@ -5,8 +5,7 @@ const fs = require('fs')
 
 // Will be filled with names and types
 // and used to generate public.xml
-const publicValues = []
-const publicKeys = {} // Used to prevent duplicates
+const publicValues = {}
 
 // Values resource types whose children should be added to public.xml
 const recursiveTypes = [
@@ -47,20 +46,16 @@ function getLastPathComponent (path) {
 }
 
 function addToPublicObj (type, name) {
-  if (!publicKeys[type]) {
-    publicKeys[type] = {}
+  if (!publicValues[type]) {
+    publicValues[type] = []
   }
 
   // Check if name was already added
-  if (publicKeys[type][name]) {
+  if (publicValues[type].indexOf(name) !== -1) {
     return
   }
 
-  publicKeys[type][name] = true
-  publicValues.push({
-    type: type,
-    name: name
-  })
+  publicValues[type].push(name)
 }
 
 /**
@@ -172,11 +167,22 @@ function formatPublicObject () {
       public: []
     }
   }
-  for (let i = 0; i < publicValues.length; i++) {
-    formattedPublic.resources.public.push({
-      '$': publicValues[i]
+
+  const types = Object.keys(publicValues)
+  types.sort()
+
+  types.forEach(type => {
+    publicValues[type].sort()
+    publicValues[type].forEach(name => {
+      formattedPublic.resources.public.push({
+        $: {
+          type: type,
+          name: name
+        }
+      })
     })
-  }
+  })
+
   return formattedPublic
 }
 

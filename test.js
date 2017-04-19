@@ -5,24 +5,33 @@ import fs from 'fs'
 import pify from 'pify'
 import xml2js from 'xml2js'
 
-const expectedRes = {
-  color: [
-    'blue',
-    'green',
-    'red',
-    'redldrtl'
-  ],
-  drawable: [
-    'xmldrawable1',
-    'xmldrawable2',
-    'xmldrawablev19'
-  ],
-  layout: [
-    'activity_layout',
-    'fragment-layout',
-    'view_layout'
-  ]
-}
+const expectedRes = [
+  {
+    type: 'color',
+    values: [
+      'blue',
+      'green',
+      'red',
+      'redldrtl'
+    ]
+  },
+  {
+    type: 'drawable',
+    values: [
+      'xmldrawable1',
+      'xmldrawable2',
+      'xmldrawablev19'
+    ]
+  },
+  {
+    type: 'layout',
+    values: [
+      'activity_layout',
+      'fragment_layout',
+      'view_layout'
+    ]
+  }
+]
 
 test('main', t => {
   return pubxml.generatePublicXml(path.resolve(__dirname, 'test-res')).then(file => {
@@ -38,15 +47,14 @@ test('main', t => {
 
     const values = result.resources.public
     let count = 0
-    for (let type in expectedRes) {
-      if (!expectedRes.hasOwnProperty(type)) continue
-
-      expectedRes[type].forEach(name => {
-        let value = values[count].$
+    expectedRes.forEach(obj => {
+      const type = obj.type
+      obj.values.forEach(name => {
+        const value = values[count].$
         t.true(value.type === type)
         t.true(value.name === name)
         count++
       })
-    }
+    })
   })
 })
