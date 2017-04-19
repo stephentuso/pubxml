@@ -1,3 +1,5 @@
+'use strict'
+
 const dir = require('node-dir')
 const xml2js = require('xml2js')
 const pathUtil = require('path')

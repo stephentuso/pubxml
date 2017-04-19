@@ -1,3 +1,5 @@
+'use strict'
+
 import test from 'ava'
 import pubxml from './index'
 import path from 'path'
