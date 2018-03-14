@@ -1,6 +1,8 @@
 pubxml
 ======
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/stephentuso/pubxml.svg)](https://greenkeeper.io/)
+
 [![npm](https://img.shields.io/npm/v/pubxml.svg)](https://www.npmjs.com/package/pubxml) [![Build Status](https://travis-ci.org/stephentuso/pubxml.svg?branch=master)](https://travis-ci.org/stephentuso/pubxml)
 
 Generates `public.xml` for Android libraries, which allows resources to be hidden from clients. [More info](https://developer.android.com/studio/projects/android-library.html#PrivateResources)
